@@ -1,5 +1,5 @@
 {
-  "name": "webook-monitor",
+  "name": "Automated Ticket Availability Monitor",
   "nodes": [
     {
       "parameters": {},
@@ -20,7 +20,7 @@
           "parameters": [
             {
               "name": "apikey",
-              "value": "8xsdHO178QhMoWviuEI2Y37MvmcaSZVx"
+              "value": "YOUR_TICKETMASTER_API_KEY"
             },
             {
               "name": "size",
@@ -199,7 +199,7 @@
     },
     {
       "parameters": {
-        "sendTo": "aslammhsnkhlf@gmail.com",
+        "sendTo": "YOUR_EMAIL@example.com",
         "subject": "=🚨 Tickets Available -  {{ $json.event_name }}",
         "message": "=🚨 TICKETS AVAILABLE!\n\nEvent: {{$json.event_name}}\n\nDate: {{$json.date}}\nTime: {{$json.time}}\n\nVenue: {{$json.venue}}\nCity: {{$json.city}}\nCountry: {{$json.country}}\n\nStatus: {{$json.status}}\n\nTicketmaster:\n{{$json.url}}",
         "options": {}
@@ -212,17 +212,16 @@
       ],
       "id": "46f8c835-01d8-4acd-46de-1v35b1bcf13f",
       "name": "Send a message",
-      "webhookId": "063c556d-c267-4c2b-a7b4-79452e16a567",
       "credentials": {
         "gmailOAuth2": {
-          "id": "YYucxzwukCdvZoDJ",
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
           "name": "Gmail account"
         }
       }
     },
     {
       "parameters": {
-        "chatId": "81338778408",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "={{ `🚨 TICKETS AVAILABLE!\n\n🎤 Event: ${$json.event_name}\n\n📅 Date: ${$json.date}\n🕐 Time: ${$json.time}\n\n📍 Venue: ${$json.venue}\n🌆 City: ${$json.city}\n🇺🇸 Country: ${$json.country}\n\n🎟️ Status: ${$json.status}\n\n🔗 Ticketmaster:\n${$json.url}` }}",
         "additionalFields": {
           "appendAttribution": false
@@ -236,11 +235,10 @@
       ],
       "id": "036af680-d8b1-4562-b34ac-844864adc17c6",
       "name": "Send a text message",
-      "webhookId": "d177e3da-c7a8-4d61-a100-ce4ae9ceb7f1",
       "credentials": {
         "telegramApi": {
-          "id": "e3uA56py6Lb4GwneR",
-          "name": "Telegram account 2"
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
         }
       }
     }
@@ -325,12 +323,9 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "d94737dfb-a34d-4b73-836b-d9b637822ada",
   "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "5dbb4461729675fc81a1f52ac6f735754273cc8642827491dcf818839a019dcd9"
+    "templateCredsSetupCompleted": true
   },
   "nodeGroups": [],
-  "id": "Np7bBo4wB73ViXWsv",
   "tags": []
 }
