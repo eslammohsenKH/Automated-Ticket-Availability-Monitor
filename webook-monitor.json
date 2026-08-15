@@ -1,0 +1,336 @@
+{
+  "name": "webook-monitor",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        -48
+      ],
+      "id": "44026ee1-3ddf-4656-9a77-d60baacee672",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://app.ticketmaster.com/discovery/v2/events.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "8xsdHO178QhMoWviuEI2Y37MvmcaSZVx"
+            },
+            {
+              "name": "size",
+              "value": "5"
+            },
+            {
+              "name": "countryCode",
+              "value": "US"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -480,
+        -48
+      ],
+      "id": "35bafc7e-ca1e-4ef0-b359-a504b9a1bab3",
+      "name": "Ticketmaster API"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst events = data._embedded?.events || [];\n\nreturn events.map(event => ({\n  json: {\n    event_id: event.id || null,\n    event_name: event.name || null,\n\n    date: event.dates?.start?.localDate || null,\n    time: event.dates?.start?.localTime || null,\n\n    venue: event._embedded?.venues?.[0]?.name || null,\n    city: event._embedded?.venues?.[0]?.city?.name || null,\n    country: event._embedded?.venues?.[0]?.country?.countryCode || null,\n\n    url: event.url || null,\n\n    status: event.dates?.status?.code || null\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        -32
+      ],
+      "id": "9fdce10e-7085-40d8-a592-674ee1c3c39e",
+      "name": "Normalize Events"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2de6bd5b-b49a-4da1-8ee3-34480a7bef47",
+              "name": "keyword",
+              "value": "Eagles",
+              "type": "string"
+            },
+            {
+              "id": "1874232e-66d2-4223-8ddd-cf0543c22370",
+              "name": "city",
+              "value": "Las Vegas",
+              "type": "string"
+            },
+            {
+              "id": "3acbe69c-4163-42f2-afc0-23f049f67c27",
+              "name": "target_date",
+              "value": "2026-09-18",
+              "type": "string"
+            },
+            {
+              "id": "dde0f9bd-6592-4e8e-a0ff-26dfba515ab0",
+              "name": "monitor_enabled",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "03215ba0-8e19-4d1v-ad97-cfa8c7ffae0a",
+              "name": "Target_city",
+              "value": "Las Vegas",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        -32
+      ],
+      "id": "3aa11d0b-8763-4ae5-3ed1-02691d6a51f1",
+      "name": "Monitoring Settings"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "75964564-058d-4e89-85ff-f717759f4cfe",
+              "leftValue": "={{ $json.event_name }}",
+              "rightValue": "={{ $json.keyword }}",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "5az97771-333a-448c-9768-a1993908e216",
+              "leftValue": "={{ $json.date }}",
+              "rightValue": "={{ $json.target_date }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "2ff42ee5-b8c8-4512-8361-5859a8e15094",
+              "leftValue": "={{ $json.city }}",
+              "rightValue": "={{ $json.Target_city }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "0e2062e0-bd37-4c83-a84e-546e4e634f10",
+              "leftValue": "={{ $json.monitor_enabled }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        80,
+        -32
+      ],
+      "id": "3e139060-77a8-49bb-846b-a6d8043ac12c",
+      "name": "Filter Target Event"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "99df6303-3f00-4d70-a262-c64dcaaf0c4e",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "onsale",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        304,
+        -32
+      ],
+      "id": "6qde09f4-a24b-4544-8270-7a6d9213d54c",
+      "name": "Check Status = onsale"
+    },
+    {
+      "parameters": {
+        "sendTo": "aslammhsnkhlf@gmail.com",
+        "subject": "=🚨 Tickets Available -  {{ $json.event_name }}",
+        "message": "=🚨 TICKETS AVAILABLE!\n\nEvent: {{$json.event_name}}\n\nDate: {{$json.date}}\nTime: {{$json.time}}\n\nVenue: {{$json.venue}}\nCity: {{$json.city}}\nCountry: {{$json.country}}\n\nStatus: {{$json.status}}\n\nTicketmaster:\n{{$json.url}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        -176
+      ],
+      "id": "46f8c835-01d8-4acd-46de-1v35b1bcf13f",
+      "name": "Send a message",
+      "webhookId": "063c556d-c267-4c2b-a7b4-79452e16a567",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YYucxzwukCdvZoDJ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "81338778408",
+        "text": "={{ `🚨 TICKETS AVAILABLE!\n\n🎤 Event: ${$json.event_name}\n\n📅 Date: ${$json.date}\n🕐 Time: ${$json.time}\n\n📍 Venue: ${$json.venue}\n🌆 City: ${$json.city}\n🇺🇸 Country: ${$json.country}\n\n🎟️ Status: ${$json.status}\n\n🔗 Ticketmaster:\n${$json.url}` }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        -32
+      ],
+      "id": "036af680-d8b1-4562-b34ac-844864adc17c6",
+      "name": "Send a text message",
+      "webhookId": "d177e3da-c7a8-4d61-a100-ce4ae9ceb7f1",
+      "credentials": {
+        "telegramApi": {
+          "id": "e3uA56py6Lb4GwneR",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Ticketmaster API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ticketmaster API": {
+      "main": [
+        [
+          {
+            "node": "Normalize Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Events": {
+      "main": [
+        [
+          {
+            "node": "Monitoring Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monitoring Settings": {
+      "main": [
+        [
+          {
+            "node": "Filter Target Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Target Event": {
+      "main": [
+        [
+          {
+            "node": "Check Status = onsale",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status = onsale": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d94737dfb-a34d-4b73-836b-d9b637822ada",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5dbb4461729675fc81a1f52ac6f735754273cc8642827491dcf818839a019dcd9"
+  },
+  "nodeGroups": [],
+  "id": "Np7bBo4wB73ViXWsv",
+  "tags": []
+}
