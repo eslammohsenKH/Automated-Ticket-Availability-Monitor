@@ -1,6 +1,6 @@
 # 🎟️ Automated Ticket Availability Monitor
 
-An automated n8n workflow that monitors Ticketmaster events and sends instant notifications when a target event becomes available for sale.
+An automated **n8n workflow** that monitors Ticketmaster events and sends instant notifications through **Telegram** and **Email** when a target event becomes available for sale.
 
 ---
 
@@ -8,15 +8,15 @@ An automated n8n workflow that monitors Ticketmaster events and sends instant no
 
 This project demonstrates an automated event-monitoring system built with **n8n** and the **Ticketmaster API**.
 
-The workflow retrieves event data, normalizes the API response, filters events based on predefined criteria, checks ticket availability, and sends notifications through **Telegram and Email** when tickets become available.
+The workflow retrieves event data, normalizes the API response, filters events based on predefined criteria, checks ticket availability, and sends notifications when a matching event has an **onsale** status.
 
 ---
 
 ## 🎯 Business Objective
 
-The main objective is to eliminate the need for manually checking ticket availability.
+The main objective is to reduce the need for manually checking ticket availability.
 
-The automation continuously checks for a specific target event and notifies the user when the event status changes to **onsale**.
+The workflow allows users to define specific monitoring criteria and automatically identify matching events when the workflow is executed.
 
 This approach can be adapted to monitor:
 
