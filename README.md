@@ -28,6 +28,12 @@ This approach can be adapted to monitor:
 
 ---
 
+## 🖼️ Workflow Overview
+
+![n8n Workflow](images/workflow-overview.png)
+
+---
+
 ## ⚙️ Workflow
 
 ```text
